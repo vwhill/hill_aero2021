@@ -77,6 +77,11 @@ class LQI:
 def guidance(xa, ya, xt, yt):
     d2d = float(np.sqrt((xa-xt)**2+(ya-yt)**2))
     Hdes = float(-math.atan2((yt-ya), (xt-xa)))
+    if np.abs(yt-ya) < 50:
+        if xt-xa > 0:
+            Hdes = 0
+        if xt-xa < 0:
+            Hdes = 3.14159
     return d2d, Hdes
 
 def velprop(xe, ye, u, v, psi, dt):

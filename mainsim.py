@@ -23,12 +23,10 @@ maxiter = np.int(maxtime/dt)
 t = np.linspace(0, maxtime, maxiter)
 
 fw = guide.LateralFixedWing(dt)
-F = fw.F
-G = fw.G
 statedim = fw.statedim
 indim = fw.indim
 
-sys = guide.LQI(dt, F, G, statedim, indim)
+sys = guide.LQI(dt, fw.F, fw.G, statedim, indim)
 
 Fi = sys.Fi
 Gi = sys.Gi
@@ -45,21 +43,23 @@ b = 100
 mapsize = 3000
 mesh = astar.meshgen(a, b, mapsize)
 
-targ = np.array([[mesh[50, 0], mesh[0, 0]],
-                 [mesh[0, 0], mesh[0, 50]],
-                 [mesh[50, 0], mesh[0, 50]],
-                 [mesh[0, 0], mesh[0, 0]],
-                 [mesh[0, 0], mesh[0, 50]],
-                 [mesh[25, 0], mesh[75, 0]],
-                 [mesh[50, 0], mesh[0, 50]],
-                 [mesh[50, 0], mesh[0, 0]]])
+# targ = np.array([[mesh[50, 0], mesh[0, 0]],
+#                  [mesh[0, 0], mesh[0, 50]],
+#                  [mesh[50, 0], mesh[0, 50]],
+#                  [mesh[0, 0], mesh[0, 0]],
+#                  [mesh[0, 0], mesh[0, 50]],
+#                  [mesh[25, 0], mesh[75, 0]],
+#                  [mesh[50, 0], mesh[0, 50]],
+#                  [mesh[50, 0], mesh[0, 0]]])
 
 # targ = np.array([[1000, 1000],
 #                  [0, 2000],
 #                  [-1000, 1000],
 #                  [0, 0]])
 
-# targ = 3000*np.random.rand(10, 2)
+targ = 3000*np.random.rand(10, 2)
+
+# targ = np.array([[0, 1000]])
 
 # targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
 
@@ -96,6 +96,8 @@ for ii in range(0, maxiter):
         dxy[0, ii] = d2d
         xdes[4] = Hdes
         x = Fi@x+Gi@xdes
+        if np.abs(x[9]) > 1.9*np.pi:
+            x[9] = 0
         xs[:, ii] = np.ndarray.flatten(x)
         v = x[0, 0]
         psi = x[4, 0]
@@ -104,6 +106,7 @@ for ii in range(0, maxiter):
         xy[1, ii] = ya
         if d2d < 50:
             wpt = wpt+1
+            x[5:] = np.zeros((np.size(x[5:]), 1)) # reset error buildup
             if wpt == np.size(targ, axis=0):
                 np.disp('Im Finished!')
                 break
@@ -115,6 +118,8 @@ for ii in range(0, maxiter):
                 xdes[4] = Hdes
     else:
         x = Fi@x+Gi@xdes
+        if np.abs(x[9]) > 2*np.pi: # reset error buildup
+            x[9] = 0
         xs[:, ii] = np.ndarray.flatten(x)
         v = x[0, 0]
         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
@@ -122,6 +127,9 @@ for ii in range(0, maxiter):
         xy[1, ii] = ya
         
 #%% Plots
+
+plt.plot(t, xs[9,:])
+plt.show()
 
 plt.plot(xy[0, :ii], xy[1, :ii])
 plt.plot(xa_i, ya_i, 'ro')
@@ -133,6 +141,8 @@ plt.plot(targ[4, 0], targ[4, 1], 'rx')
 plt.plot(targ[5, 0], targ[5, 1], 'rx')
 plt.plot(targ[6, 0], targ[6, 1], 'rx')
 plt.plot(targ[7, 0], targ[7, 1], 'rx')
+plt.plot(targ[8, 0], targ[8, 1], 'rx')
+plt.plot(targ[9, 0], targ[9, 1], 'rx')
 plt.show()
 
 # plt.plot(t, np.ndarray.flatten(dxy))
