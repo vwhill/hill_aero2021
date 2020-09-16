@@ -26,10 +26,13 @@ fw = guide.LateralFixedWing(dt)
 statedim = fw.statedim
 indim = fw.indim
 
-sys = guide.LQI(dt, fw.F, fw.G, statedim, indim)
+sysi = guide.LQI(dt, fw.F, fw.G, statedim, indim)
+Fi = sysi.Fi
+Gi = sysi.Gi
 
-Fi = sys.Fi
-Gi = sys.Gi
+sysr = guide.LQR(dt, fw.F, fw.G, statedim, indim)
+Fr = sysr.Fr
+Gr = sysr.Gr
 
 #%% Define targets and mission area
 
@@ -76,18 +79,68 @@ xy[1, 0] = ya
 dxy = np.zeros((1, maxiter))
 dxy[0, 0] = d2d_i
 
-#%% Simulate
+#%% Simulate LQI
 
-x = np.zeros([statedim*2, 1])
+# x = np.zeros([statedim*2, 1])
+# x[0] = 3.0
+# x[4] = np.deg2rad(0)
+# v = x[0, 0]
+# psi = x[4, 0]
+# u = 30.0
+
+# xdes = np.zeros([statedim*2, 1])
+# xdes[4, 0] = Hdes_i
+# xs = np.zeros((statedim*2, maxiter))
+# xs[:, 0] = np.ndarray.flatten(x)
+
+# for ii in range(0, maxiter):
+#     if ii % mod == 0:
+#         [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
+#         dxy[0, ii] = d2d
+#         xdes[4] = Hdes
+#         x = Fi@x+Gi@xdes
+#         if np.abs(x[9]) > 1.99*np.pi:
+#             x[9] = 0
+#         xs[:, ii] = np.ndarray.flatten(x)
+#         v = x[0, 0]
+#         psi = x[4, 0]
+#         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
+#         xy[0, ii] = xa
+#         xy[1, ii] = ya
+#         if d2d < 50:
+#             wpt = wpt+1
+#             x[5:] = np.zeros((np.size(x[5:]), 1)) # reset error buildup
+#             if wpt == np.size(targ, axis=0):
+#                 np.disp('Im Finished!')
+#                 break
+#             else:
+#                 xt = targ[wpt, 0]
+#                 yt = targ[wpt, 1]
+#                 [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
+#                 dxy[0, ii] = d2d
+#                 xdes[4] = Hdes
+#     else:
+#         x = Fi@x+Gi@xdes
+#         if np.abs(x[9]) > 1.99*np.pi: # reset error buildup
+#             x[9] = 0
+#         xs[:, ii] = np.ndarray.flatten(x)
+#         v = x[0, 0]
+#         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
+#         xy[0, ii] = xa
+#         xy[1, ii] = ya
+        
+#%% Simulate LQR
+
+x = np.zeros([statedim, 1])
 x[0] = 3.0
 x[4] = np.deg2rad(0)
 v = x[0, 0]
 psi = x[4, 0]
 u = 30.0
 
-xdes = np.zeros([statedim*2, 1])
+xdes = np.zeros([statedim, 1])
 xdes[4, 0] = Hdes_i
-xs = np.zeros((statedim*2, maxiter))
+xs = np.zeros((statedim, maxiter))
 xs[:, 0] = np.ndarray.flatten(x)
 
 for ii in range(0, maxiter):
@@ -95,9 +148,7 @@ for ii in range(0, maxiter):
         [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
         dxy[0, ii] = d2d
         xdes[4] = Hdes
-        x = Fi@x+Gi@xdes
-        if np.abs(x[9]) > 1.9*np.pi:
-            x[9] = 0
+        x = Fr@x+Gr@xdes
         xs[:, ii] = np.ndarray.flatten(x)
         v = x[0, 0]
         psi = x[4, 0]
@@ -106,7 +157,6 @@ for ii in range(0, maxiter):
         xy[1, ii] = ya
         if d2d < 50:
             wpt = wpt+1
-            x[5:] = np.zeros((np.size(x[5:]), 1)) # reset error buildup
             if wpt == np.size(targ, axis=0):
                 np.disp('Im Finished!')
                 break
@@ -117,9 +167,7 @@ for ii in range(0, maxiter):
                 dxy[0, ii] = d2d
                 xdes[4] = Hdes
     else:
-        x = Fi@x+Gi@xdes
-        if np.abs(x[9]) > 2*np.pi: # reset error buildup
-            x[9] = 0
+        x = Fr@x+Gr@xdes
         xs[:, ii] = np.ndarray.flatten(x)
         v = x[0, 0]
         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
@@ -128,8 +176,8 @@ for ii in range(0, maxiter):
         
 #%% Plots
 
-plt.plot(t, xs[9,:])
-plt.show()
+# plt.plot(t, xs[9,:])
+# plt.show()
 
 plt.plot(xy[0, :ii], xy[1, :ii])
 plt.plot(xa_i, ya_i, 'ro')

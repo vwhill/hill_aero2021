@@ -74,10 +74,24 @@ class LQI:
         self.Fi = sysac.A
         self.Gi = sysac.B
 
+class LQR:
+    def __init__(self, dt, F, G, statedim, indim):
+        C = np.identity(statedim)
+        D = np.zeros((statedim, statedim))
+        Q = np.identity(statedim)
+        R = np.identity(indim)
+        P = lin.solve_discrete_are(F, G, Q, R, e=None, s=None, balanced=True)
+        K = lin.inv(G.T@P@G+R)@(G.T@P@F)
+        
+        sysac = sig.StateSpace(F-G@K, G@K, C, D, dt=dt)
+        
+        self.Fr = sysac.A
+        self.Gr = sysac.B
+
 def guidance(xa, ya, xt, yt):
     d2d = float(np.sqrt((xa-xt)**2+(ya-yt)**2))
     Hdes = float(-math.atan2((yt-ya), (xt-xa)))
-    if np.abs(yt-ya) < 50:
+    if np.abs(yt-ya) < 10:
         if xt-xa > 0:
             Hdes = 0
         if xt-xa < 0:
