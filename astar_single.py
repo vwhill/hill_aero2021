@@ -191,20 +191,28 @@ def search(maze, cost, start, end):
 def mazegen(a, b):
     a = 100
     b = 100
-    maze = np.random.random((a, b))
     
-    for ii in range(0, np.size(maze, axis=0)):
-        for jj in range(0, np.size(maze, axis=1)):
-            if maze[ii][jj] < 0.2:
-                maze[ii][jj] = 1
-            else:
-                maze[ii][jj] = 0
+    # maze = np.random.random((a, b)) # generate random maze
+    # for ii in range(0, np.size(maze, axis=0)):
+    #     for jj in range(0, np.size(maze, axis=1)):
+    #         if maze[ii][jj] < 0.2:
+    #             maze[ii][jj] = 1
+    #         else:
+    #             maze[ii][jj] = 0
+    
+    maze = np.zeros((a, b))
+    maze[:, np.int(b/3)] = 1
+    maze[np.int(a/2):a, np.int(b/3)] = 0
+    # maze[np.int(a/10), :] = 1
+    # maze[np.int(a/10), np.int(3*b/4):b] = 0
+    obs = np.where(maze==1)
+    
     start = [0, 0] # starting position
     end = [a-1, b-1] # ending position
     maze[start[0]][start[1]] = 0
     maze[end[0]][end[1]] = 0
     cost = 1 # cost per movement
-    return maze, start, end, cost
+    return maze, start, end, cost, obs
 
 def meshgen(a, b, mapsize):
     x=np.linspace(0,mapsize,a)
@@ -219,7 +227,13 @@ def meshgen(a, b, mapsize):
     
     for i in range(1,a):
         mesh[i, :] = np.linspace(mesh[i, 0], mesh[i, b-1], b)
-    return mesh
+    return mesh, x, y
+
+def selection_sort(x):
+    for i in range(len(x)):
+        swap = i + np.argmin(x[i:])
+        (x[i], x[swap]) = (x[swap], x[i])
+    return x
 
 if __name__ == '__main__':
     
@@ -227,8 +241,8 @@ if __name__ == '__main__':
     b = 100
     mapsize = 3000 # square size of map
     
-    [maze, start, end, cost] = mazegen(a, b)
+    [maze, start, end, cost, obs] = mazegen(a, b)
     mesh = meshgen(a, b, mapsize)
 
-    path = search(maze,cost, start, end)
+    path = search(maze, cost, start, end)
     # print(path)
