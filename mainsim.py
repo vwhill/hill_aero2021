@@ -177,11 +177,11 @@ for ii in range(0, maxiter):
 # plt.plot(t, xs[9,:])
 # plt.show()
 
-plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path')
+plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', color='magenta')
 # plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
 plt.plot(xa_i, ya_i, 'ro')
 plt.plot(xm[end[1]], ym[end[0]], 'rx')
-plt.plot(xm[obsx], ym[obsy], label='Obstacles')
+plt.scatter(xm[obsx], ym[obsy], s=5, label='Obstacles', color='black')
 plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
 plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
 plt.legend()

@@ -201,10 +201,12 @@ def mazegen(a, b):
     #             maze[ii][jj] = 0
     
     maze = np.zeros((a, b))
-    maze[:, np.int(b/3)] = 1
-    maze[np.int(a/2):a, np.int(b/3)] = 0
-    # maze[np.int(a/10), :] = 1
-    # maze[np.int(a/10), np.int(3*b/4):b] = 0
+    # maze[:, np.int(b/3)] = 1
+    # maze[np.int(2*a/3):a, np.int(b/3)] = 0
+    maze[np.int(a/5), :] = 1
+    maze[np.int(a/5), np.int(3*b/4):b] = 0
+    # maze[np.int(3*a/4), :] = 1
+    # maze[np.int(3*a/4), 0:np.int(b/4)] = 0
     obs = np.where(maze==1)
     
     start = [0, 0] # starting position
