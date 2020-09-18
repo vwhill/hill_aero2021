@@ -14,6 +14,7 @@ import guideclass as guide
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 #%% Build dynamic model
 
 dt = 0.01
@@ -43,28 +44,25 @@ ya_i = ya
 
 a = 100
 b = 100
-mapsize = 3000
-mesh = astar.meshgen(a, b, mapsize)
+mapsize = 10000
+[mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
-# targ = np.array([[mesh[50, 0], mesh[0, 0]],
-#                  [mesh[0, 0], mesh[0, 50]],
-#                  [mesh[50, 0], mesh[0, 50]],
-#                  [mesh[0, 0], mesh[0, 0]],
-#                  [mesh[0, 0], mesh[0, 50]],
-#                  [mesh[25, 0], mesh[75, 0]],
-#                  [mesh[50, 0], mesh[0, 50]],
-#                  [mesh[50, 0], mesh[0, 0]]])
+[maze, start, end, cost, obs] = astar.mazegen(a, b)
 
-# targ = np.array([[1000, 1000],
-#                  [0, 2000],
-#                  [-1000, 1000],
-#                  [0, 0]])
+obsx = np.asarray(obs[1])
+obsy = np.asarray(obs[0])
 
-targ = 3000*np.random.rand(10, 2)
+path_list = astar.search(maze, cost, start, end)
+path = np.asarray(path_list)
 
-# targ = np.array([[0, 1000]])
+pathidx = np.where(path>-1)
+pathidx_x = astar.selection_sort(np.asarray(pathidx[1]))
+pathidx_y = astar.selection_sort(np.asarray(pathidx[0]))
+targ = np.zeros((np.size(pathidx[0]), 2))
 
-# targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
+for jj in range(0, np.size(pathidx_x)):
+    targ[jj, 0] = xm[pathidx_x[jj]]
+    targ[jj, 1] = ym[pathidx_y[jj]]
 
 xt = targ[0, 0]
 yt = targ[0, 1]
@@ -133,10 +131,10 @@ dxy[0, 0] = d2d_i
 
 x = np.zeros([statedim, 1])
 x[0] = 3.0
-x[4] = np.deg2rad(0)
+x[4] = np.deg2rad(Hdes_i)
 v = x[0, 0]
 psi = x[4, 0]
-u = 30.0
+u = 10.0
 
 xdes = np.zeros([statedim, 1])
 xdes[4, 0] = Hdes_i
@@ -155,7 +153,7 @@ for ii in range(0, maxiter):
         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
         xy[0, ii] = xa
         xy[1, ii] = ya
-        if d2d < 50:
+        if d2d < 100:
             wpt = wpt+1
             if wpt == np.size(targ, axis=0):
                 np.disp('Im Finished!')
@@ -179,19 +177,37 @@ for ii in range(0, maxiter):
 # plt.plot(t, xs[9,:])
 # plt.show()
 
-plt.plot(xy[0, :ii], xy[1, :ii])
+plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path')
+# plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
 plt.plot(xa_i, ya_i, 'ro')
-plt.plot(targ[0, 0], targ[0, 1], 'rx')
-plt.plot(targ[1, 0], targ[1, 1], 'rx')
-plt.plot(targ[2, 0], targ[2, 1], 'rx')
-plt.plot(targ[3, 0], targ[3, 1], 'rx')
-plt.plot(targ[4, 0], targ[4, 1], 'rx')
-plt.plot(targ[5, 0], targ[5, 1], 'rx')
-plt.plot(targ[6, 0], targ[6, 1], 'rx')
-plt.plot(targ[7, 0], targ[7, 1], 'rx')
-plt.plot(targ[8, 0], targ[8, 1], 'rx')
-plt.plot(targ[9, 0], targ[9, 1], 'rx')
+plt.plot(xm[end[1]], ym[end[0]], 'rx')
+plt.plot(xm[obsx], ym[obsy], label='Obstacles')
+plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
+plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
+plt.legend()
 plt.show()
 
 # plt.plot(t, np.ndarray.flatten(dxy))
 # plt.show()
+
+# %% Dead code
+
+# targ = np.array([[mesh[50, 0], mesh[0, 0]],
+#                  [mesh[0, 0], mesh[0, 50]],
+#                  [mesh[50, 0], mesh[0, 50]],
+#                  [mesh[0, 0], mesh[0, 0]],
+#                  [mesh[0, 0], mesh[0, 50]],
+#                  [mesh[25, 0], mesh[75, 0]],
+#                  [mesh[50, 0], mesh[0, 50]],
+#                  [mesh[50, 0], mesh[0, 0]]])
+
+# targ = np.array([[1000, 1000],
+#                  [0, 2000],
+#                  [-1000, 1000],
+#                  [0, 0]])
+
+# targ = 3000*np.random.rand(10, 2)
+
+# targ = np.array([[0, 1000]])
+
+# targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
