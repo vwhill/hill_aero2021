@@ -41,8 +41,8 @@ ya = 0
 xa_i = xa
 ya_i = ya
 
-a = 100
-b = 100
+a = 50
+b = 50
 mapsize = 10000
 [mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
@@ -130,7 +130,7 @@ plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', color='magenta')
 # plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
 plt.plot(xa_i, ya_i, 'ro')
 plt.plot(xm[end[1]], ym[end[0]], 'rx')
-plt.scatter(xm[obsx], ym[obsy], s=5, label='Obstacles', color='black')
+plt.scatter(xm[obsx], ym[obsy], s=30, label='Obstacles', color='black')
 plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
 plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
 plt.legend()
