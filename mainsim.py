@@ -42,8 +42,13 @@ ya = 0
 xa_i = xa
 ya_i = ya
 
+<<<<<<< HEAD
 a = 100
 b = 100
+=======
+a = 50
+b = 50
+>>>>>>> main
 mapsize = 10000
 [mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
@@ -77,7 +82,101 @@ xy[1, 0] = ya
 dxy = np.zeros((1, maxiter))
 dxy[0, 0] = d2d_i
 
-#%% Simulate LQI
+#%% Simulate LQR
+
+x = np.zeros([statedim, 1])
+x[0] = 3.0
+x[4] = np.deg2rad(Hdes_i)
+v = x[0, 0]
+psi = x[4, 0]
+u = 10.0
+
+xdes = np.zeros([statedim, 1])
+xdes[4, 0] = Hdes_i
+xs = np.zeros((statedim, maxiter))
+xs[:, 0] = np.ndarray.flatten(x)
+
+for ii in range(0, maxiter):
+    if ii % mod == 0:
+        [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
+        dxy[0, ii] = d2d
+        xdes[4] = Hdes
+        x = Fr@x+Gr@xdes
+        xs[:, ii] = np.ndarray.flatten(x)
+        v = x[0, 0]
+        psi = x[4, 0]
+        [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
+        xy[0, ii] = xa
+        xy[1, ii] = ya
+        if d2d < 100:
+            wpt = wpt+1
+            if wpt == np.size(targ, axis=0):
+                np.disp('Im Finished!')
+                break
+            else:
+                xt = targ[wpt, 0]
+                yt = targ[wpt, 1]
+                [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
+                dxy[0, ii] = d2d
+                xdes[4] = Hdes
+    else:
+        x = Fr@x+Gr@xdes
+        xs[:, ii] = np.ndarray.flatten(x)
+        v = x[0, 0]
+        [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
+        xy[0, ii] = xa
+        xy[1, ii] = ya
+
+#%% Plots
+
+# plt.plot(t, xs[9,:])
+# plt.show()
+
+<<<<<<< HEAD
+plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path')
+# plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
+plt.plot(xa_i, ya_i, 'ro')
+plt.plot(xm[end[1]], ym[end[0]], 'rx')
+plt.plot(xm[obsx], ym[obsy], label='Obstacles')
+=======
+plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', color='magenta')
+# plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
+plt.plot(xa_i, ya_i, 'ro')
+plt.plot(xm[end[1]], ym[end[0]], 'rx')
+plt.scatter(xm[obsx], ym[obsy], s=30, label='Obstacles', color='black')
+>>>>>>> main
+plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
+plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
+plt.legend()
+plt.show()
+
+# plt.plot(t, np.ndarray.flatten(dxy))
+# plt.show()
+
+# %% Dead code
+
+# targ = np.array([[mesh[50, 0], mesh[0, 0]],
+#                  [mesh[0, 0], mesh[0, 50]],
+#                  [mesh[50, 0], mesh[0, 50]],
+#                  [mesh[0, 0], mesh[0, 0]],
+#                  [mesh[0, 0], mesh[0, 50]],
+#                  [mesh[25, 0], mesh[75, 0]],
+#                  [mesh[50, 0], mesh[0, 50]],
+#                  [mesh[50, 0], mesh[0, 0]]])
+
+# targ = np.array([[1000, 1000],
+#                  [0, 2000],
+#                  [-1000, 1000],
+#                  [0, 0]])
+
+# targ = 3000*np.random.rand(10, 2)
+
+# targ = np.array([[0, 1000]])
+
+<<<<<<< HEAD
+# targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
+=======
+# targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
 
 # x = np.zeros([statedim*2, 1])
 # x[0] = 3.0
@@ -126,88 +225,4 @@ dxy[0, 0] = d2d_i
 #         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
 #         xy[0, ii] = xa
 #         xy[1, ii] = ya
-        
-#%% Simulate LQR
-
-x = np.zeros([statedim, 1])
-x[0] = 3.0
-x[4] = np.deg2rad(Hdes_i)
-v = x[0, 0]
-psi = x[4, 0]
-u = 10.0
-
-xdes = np.zeros([statedim, 1])
-xdes[4, 0] = Hdes_i
-xs = np.zeros((statedim, maxiter))
-xs[:, 0] = np.ndarray.flatten(x)
-
-for ii in range(0, maxiter):
-    if ii % mod == 0:
-        [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
-        dxy[0, ii] = d2d
-        xdes[4] = Hdes
-        x = Fr@x+Gr@xdes
-        xs[:, ii] = np.ndarray.flatten(x)
-        v = x[0, 0]
-        psi = x[4, 0]
-        [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
-        xy[0, ii] = xa
-        xy[1, ii] = ya
-        if d2d < 100:
-            wpt = wpt+1
-            if wpt == np.size(targ, axis=0):
-                np.disp('Im Finished!')
-                break
-            else:
-                xt = targ[wpt, 0]
-                yt = targ[wpt, 1]
-                [d2d, Hdes] = guide.guidance(xa, ya, xt, yt)
-                dxy[0, ii] = d2d
-                xdes[4] = Hdes
-    else:
-        x = Fr@x+Gr@xdes
-        xs[:, ii] = np.ndarray.flatten(x)
-        v = x[0, 0]
-        [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
-        xy[0, ii] = xa
-        xy[1, ii] = ya
-        
-#%% Plots
-
-# plt.plot(t, xs[9,:])
-# plt.show()
-
-plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path')
-# plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
-plt.plot(xa_i, ya_i, 'ro')
-plt.plot(xm[end[1]], ym[end[0]], 'rx')
-plt.plot(xm[obsx], ym[obsy], label='Obstacles')
-plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
-plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
-plt.legend()
-plt.show()
-
-# plt.plot(t, np.ndarray.flatten(dxy))
-# plt.show()
-
-# %% Dead code
-
-# targ = np.array([[mesh[50, 0], mesh[0, 0]],
-#                  [mesh[0, 0], mesh[0, 50]],
-#                  [mesh[50, 0], mesh[0, 50]],
-#                  [mesh[0, 0], mesh[0, 0]],
-#                  [mesh[0, 0], mesh[0, 50]],
-#                  [mesh[25, 0], mesh[75, 0]],
-#                  [mesh[50, 0], mesh[0, 50]],
-#                  [mesh[50, 0], mesh[0, 0]]])
-
-# targ = np.array([[1000, 1000],
-#                  [0, 2000],
-#                  [-1000, 1000],
-#                  [0, 0]])
-
-# targ = 3000*np.random.rand(10, 2)
-
-# targ = np.array([[0, 1000]])
-
-# targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
+>>>>>>> main
