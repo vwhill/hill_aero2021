@@ -42,13 +42,9 @@ ya = 0
 xa_i = xa
 ya_i = ya
 
-<<<<<<< HEAD
-a = 100
-b = 100
-=======
 a = 50
 b = 50
->>>>>>> main
+
 mapsize = 10000
 [mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
@@ -132,19 +128,12 @@ for ii in range(0, maxiter):
 # plt.plot(t, xs[9,:])
 # plt.show()
 
-<<<<<<< HEAD
+
 plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path')
 # plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
 plt.plot(xa_i, ya_i, 'ro')
 plt.plot(xm[end[1]], ym[end[0]], 'rx')
-plt.plot(xm[obsx], ym[obsy], label='Obstacles')
-=======
-plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', color='magenta')
-# plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
-plt.plot(xa_i, ya_i, 'ro')
-plt.plot(xm[end[1]], ym[end[0]], 'rx')
 plt.scatter(xm[obsx], ym[obsy], s=30, label='Obstacles', color='black')
->>>>>>> main
 plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
 plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
 plt.legend()
@@ -173,9 +162,9 @@ plt.show()
 
 # targ = np.array([[0, 1000]])
 
-<<<<<<< HEAD
+
 # targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
-=======
+
 # targ = np.array([np.linspace(1,1000,num=10),np.linspace(1,500,num=10)]).T
 
 # x = np.zeros([statedim*2, 1])
@@ -225,4 +214,3 @@ plt.show()
 #         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
 #         xy[0, ii] = xa
 #         xy[1, ii] = ya
->>>>>>> main
