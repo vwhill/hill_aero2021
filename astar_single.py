@@ -201,8 +201,8 @@ def mazegen(a, b):
     maze = np.zeros((a, b))
     maze[:, np.int(b/3)] = 1
     maze[np.int(2*a/3):a, np.int(b/3)] = 0
-    # maze[:, np.int(2*b/3)] = 1
-    # maze[0:np.int(a/3), np.int(2*b/3)] = 0
+    maze[:, np.int(2*b/3)] = 1
+    maze[0:np.int(a/3), np.int(2*b/3)] = 0
     # maze[np.int(a/5), :] = 1
     # maze[np.int(a/5), np.int(3*b/4):b] = 0
     # maze[np.int(3*a/4), :] = 1

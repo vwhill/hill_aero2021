@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 dt = 0.01
 mod = 100
-maxtime = 5000
+maxtime = 10000
 maxiter = np.int(maxtime/dt)
 t = np.linspace(0, maxtime, maxiter)
 
@@ -56,14 +56,17 @@ obsy = np.asarray(obs[0])
 path_list = astar.search(maze, cost, start, end)
 path = np.asarray(path_list)
 
-pathidx = np.where(path>-1)
-pathidx_x = astar.selection_sort(np.asarray(pathidx[1]))
-pathidx_y = astar.selection_sort(np.asarray(pathidx[0]))
-targ = np.zeros((np.size(pathidx[0]), 2))
+idx = np.zeros((np.max(path), 2))
+targ = np.zeros((np.max(path), 2))
+pt = 0
 
-for jj in range(0, np.size(pathidx_x)):
-    targ[jj, 0] = xm[pathidx_x[jj]]
-    targ[jj, 1] = ym[pathidx_y[jj]]
+for qq in range(0, np.max(path)):
+    where = np.where(path==pt)
+    idx[qq, 0] = where[1]
+    idx[qq, 1] = where[0]
+    pt = pt+1
+    targ[qq, 0] = xm[np.int(idx[qq, 0])]
+    targ[qq, 1] = ym[np.int(idx[qq, 1])]
 
 xt = targ[0, 0]
 yt = targ[0, 1]
@@ -129,8 +132,8 @@ for ii in range(0, maxiter):
 # plt.show()
 
 
-plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path')
-# plt.plot(targ[:, 0], targ[:, 1], label='Waypoints')
+plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', linewidth=3)
+plt.scatter(targ[:, 0], targ[:, 1], s=5, label='Waypoints', color='magenta')
 plt.plot(xa_i, ya_i, 'ro')
 plt.plot(xm[end[1]], ym[end[0]], 'rx')
 plt.scatter(xm[obsx], ym[obsy], s=30, label='Obstacles', color='black')
@@ -214,3 +217,11 @@ plt.show()
 #         [xa, ya] = guide.velprop(xa, ya, u, v, psi, dt)
 #         xy[0, ii] = xa
 #         xy[1, ii] = ya
+# pathidx = np.where(path>-1)
+# pathidx_x = astar.selection_sort(np.asarray(pathidx[1]))
+# pathidx_y = astar.selection_sort(np.asarray(pathidx[0]))
+# targ = np.zeros((np.size(pathidx[0]), 2))
+# 
+# for jj in range(0, np.size(pathidx_x)):
+#     targ[jj, 0] = xm[pathidx_x[jj]]
+#     targ[jj, 1] = ym[pathidx_y[jj]]
