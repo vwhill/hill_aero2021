@@ -128,10 +128,6 @@ for ii in range(0, maxiter):
 
 #%% Plots
 
-# plt.plot(t, xs[9,:])
-# plt.show()
-
-
 plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', linewidth=3)
 plt.scatter(targ[:, 0], targ[:, 1], s=5, label='Waypoints', color='magenta')
 plt.plot(xa_i, ya_i, 'ro')

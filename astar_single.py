@@ -82,13 +82,18 @@ def search(maze, cost, start, end):
     outer_iterations = 0
     max_iterations = (len(maze) // 2) ** 10
 
-    # what squares do we search . serarch movement is left-right-top-bottom 
+    # what squares do we search . search movement is left-right-top-bottom 
     #(4 movements) from every positon
 
     move  =  [[-1, 0 ], # go up
               [ 0, -1], # go left
               [ 1, 0 ], # go down
-              [ 0, 1 ]] # go right
+              [ 0, 1 ], # go right
+              [ 1, 1 ], # diagonals
+              [ 1, -1],
+              [-1, 1 ],
+              [-1, -1]]
+                
 
 
     """
@@ -153,7 +158,11 @@ def search(maze, cost, start, end):
             if (node_position[0] > (no_rows - 1) or 
                 node_position[0] < 0 or 
                 node_position[1] > (no_columns -1) or 
-                node_position[1] < 0):
+                node_position[1] < 0 or 
+                node_position[0] < 0 and node_position[1] < 0 or 
+                node_position[0] > (no_rows-1) and node_position[1] < 0 or
+                node_position[0] < 0 and node_position[1] < (no_columns-1) or
+                node_position[0] > (no_rows-1) and node_position[1] > (no_columns-1)):
                 continue
 
             # Make sure walkable terrain
@@ -193,7 +202,7 @@ def mazegen(a, b):
     maze = np.random.random((a, b)) # generate random maze
     for ii in range(0, np.size(maze, axis=0)):
         for jj in range(0, np.size(maze, axis=1)):
-            if maze[ii][jj] < 0.35:
+            if maze[ii][jj] < 0.4:
                 maze[ii][jj] = 1
             else:
                 maze[ii][jj] = 0
