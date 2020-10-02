@@ -14,7 +14,6 @@ import guideclass as guide
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 #%% Build dynamic model
 
 dt = 0.01
@@ -37,18 +36,20 @@ Gr = sysr.Gr
 
 #%% Define targets and mission area
 
-xa = 0
-ya = 0
-xa_i = xa
-ya_i = ya
-
 a = 50
 b = 50
-
 mapsize = 10000
 [mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
-[maze, start, end, cost, obs] = astar.mazegen(a, b)
+start = np.array([[0, 0]])
+xa = start
+ya = start
+xa_i = xa
+ya_i = ya
+
+end = np.array([[25, 25]])
+
+[maze, cost, obs] = astar.mazegen(a, b)
 
 obsx = np.asarray(obs[1])
 obsy = np.asarray(obs[0])
@@ -73,8 +74,8 @@ yt = targ[0, 1]
 wpt = 0
 
 xy = np.zeros((2, maxiter))
-xy[0, 0] = xa
-xy[1, 0] = ya
+xy[0, 0] = start
+xy[1, 0] = start
 
 [d2d_i, Hdes_i] = guide.guidance(xa, ya, xt, yt)
 

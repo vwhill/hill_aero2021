@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 18 08:39:41 2020
+Created on Fri Oct  2 10:39:20 2020
 
 @author: vince
 """
 
-import numpy as np
-# import astar_multi as astar
+#%% Modules
+
 import astar_single as astar
 import guideclass as guide
+import numpy as np
+import matplotlib.pyplot as plt
 
 #%% Build dynamic model
 
@@ -38,10 +40,12 @@ mapsize = 10000
 [mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
 start = np.array([[0, 0],
-                  [25, 0]])
+                  [25, 0],
+                  [50, 0]])
 
 end = np.array([[50, 50],
-                [50, 25]])
+                [50, 25],
+                [50, 0]])
 
 [maze, cost] = astar.mazegen(a, b)
 
@@ -70,11 +74,12 @@ for jj in range(0, np.size(start, axis=0)):
 pick = np.zeros((np.size(pay, axis=0), 1))
 
 for yy in range(0, np.size(pay, axis=0)):
-    pick[yy, 0] = np.asarray(np.where(pay[yy, :] == np.min(pay[yy, :])))
+    pick[yy, 0] = np.max(np.asarray(np.where(pay[yy, :] == np.min(pay[yy, :]))))
 
 pa = []
 pa.append(ps[int(pick[0])])
-pa.append(ps[int(int(np.size(start, axis=0))+pick[1])])
+for oo in range(0, np.size(pick)-1):
+    pa.append(ps[int(int(np.size(start, axis=0))+pick[oo+1])])
 
 targlist = []
 
@@ -171,3 +176,18 @@ for aa in range(0, np.size(pick)):
             [xa[aa], ya[aa]] = guide.velprop(xa[aa], ya[aa], u, v, psi, dt)
             xy[aa][0, ii] = xa[aa]
             xy[aa][1, ii] = ya[aa]
+
+#%% Plots
+
+# plt.plot(xy[0, :ii], xy[1, :ii], label='Aircraft path', linewidth=3)
+# plt.scatter(targ[:, 0], targ[:, 1], s=5, label='Waypoints', color='magenta')
+# plt.plot(xa_i, ya_i, 'ro')
+# plt.plot(xm[end[1]], ym[end[0]], 'rx')
+# plt.scatter(xm[obsx], ym[obsy], s=30, label='Obstacles', color='black')
+# plt.xlim(-0.05*mapsize, mapsize+mapsize*0.05)
+# plt.ylim(-0.05*mapsize, mapsize+mapsize*0.05)
+# plt.legend()
+# plt.show()
+
+# plt.plot(t, np.ndarray.flatten(dxy))
+# plt.show()

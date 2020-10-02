@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Sep  5 17:20:44 2020
+Created on Fri Oct  2 09:43:20 2020
 
-@author: vincenthill
+@author: vince
 """
 
 import numpy as np
@@ -32,7 +31,7 @@ class Node:
         return self.position == other.position
 
 # This function return the path of the search
-def return_path(current_node,maze):
+def return_path(current_node, maze):
     path = []
     no_rows, no_columns = np.shape(maze)
     # here we create the initialized result maze with -1 in every position
@@ -129,6 +128,7 @@ def search(maze, cost, start, end):
         current_index = 0
         for index, item in enumerate(yet_to_visit_list):
             if item.f < current_node.f:
+            # while (item.f < current_node.f).any() is True:
                 current_node = item
                 current_index = index
                 
@@ -144,7 +144,7 @@ def search(maze, cost, start, end):
 
         # test if goal is reached or not, if yes then return the path
         if current_node == end_node:
-            return return_path(current_node,maze)
+            return return_path(current_node, maze)
 
         # Generate children from all adjacent squares
         children = []
@@ -199,29 +199,35 @@ def search(maze, cost, start, end):
 
 
 def mazegen(a, b):    
-    # maze = np.random.random((a, b)) # generate random maze
-    # for ii in range(0, np.size(maze, axis=0)):
-    #     for jj in range(0, np.size(maze, axis=1)):
-    #         if maze[ii][jj] < 0.3:
-    #             maze[ii][jj] = 1
-    #         else:
-    #             maze[ii][jj] = 0
+    maze = np.random.random((a, b)) # generate random maze
+    for ii in range(0, np.size(maze, axis=0)):
+        for jj in range(0, np.size(maze, axis=1)):
+            if maze[ii][jj] < 0.1:
+                maze[ii][jj] = 1
+            else:
+                maze[ii][jj] = 0
     
-    maze = np.zeros((a, b))
-    maze[:, np.int(b/3)] = 1
-    maze[np.int(2*a/3):a, np.int(b/3)] = 0
-    maze[:, np.int(2*b/3)] = 1
-    maze[0:np.int(a/3), np.int(2*b/3)] = 0
-    maze[np.int(a/5), :] = 1
+    # maze = np.zeros((a, b))
+    # maze[:, np.int(b/3)] = 1
+    # maze[np.int(2*a/3):a, np.int(b/3)] = 0
+    # maze[:, np.int(2*b/3)] = 1
+    # maze[0:np.int(a/3), np.int(2*b/3)] = 0
+    # maze[np.int(a/5), :] = 1
     # maze[np.int(a/5), np.int(3*b/4):b] = 0
     # maze[np.int(3*a/4), :] = 1
     # maze[np.int(3*a/4), 0:np.int(b/4)] = 0
     # maze[:, np.int(b/2)] = 1
     # maze[np.int(2*a/3):a, np.int(b/2)] = 0
     
-    # obs = np.where(maze==1)
+    obs = np.where(maze==1)
+    
+    # start = [0, 0] # starting position
+    # end = [a-1, b-1] # ending position
+    # maze[start[0]][start[1]] = 0
+    # maze[end[0]][end[1]] = 0
+    
     cost = 1 # cost per movement
-    return maze, cost
+    return maze, cost, obs
 
 def meshgen(a, b, mapsize):
     x=np.linspace(0,mapsize,a)
@@ -244,14 +250,14 @@ def selection_sort(x):
         (x[i], x[swap]) = (x[swap], x[i])
     return x
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     
-    a = 100
-    b = 100
-    mapsize = 3000 # square size of map
+#     a = 100
+#     b = 100
+#     mapsize = 3000 # square size of map
     
-    [maze, start, end, cost, obs] = mazegen(a, b)
-    mesh = meshgen(a, b, mapsize)
+#     [maze, cost, obs] = mazegen(a, b)
+#     mesh = meshgen(a, b, mapsize)
 
-    path = search(maze, cost, start, end)
+#     path = search(maze, cost, start, end)
     # print(path)
