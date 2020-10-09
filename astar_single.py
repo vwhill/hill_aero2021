@@ -199,20 +199,20 @@ def search(maze, cost, start, end):
 
 
 def mazegen(a, b):    
-    # maze = np.random.random((a, b)) # generate random maze
-    # for ii in range(0, np.size(maze, axis=0)):
-    #     for jj in range(0, np.size(maze, axis=1)):
-    #         if maze[ii][jj] < 0.3:
-    #             maze[ii][jj] = 1
-    #         else:
-    #             maze[ii][jj] = 0
+    maze = np.random.random((a, b)) # generate random maze
+    for ii in range(0, np.size(maze, axis=0)):
+        for jj in range(0, np.size(maze, axis=1)):
+            if maze[ii][jj] < 0.4:
+                maze[ii][jj] = 1
+            else:
+                maze[ii][jj] = 0
     
-    maze = np.zeros((a, b))
-    maze[:, np.int(b/3)] = 1
-    maze[np.int(2*a/3):a, np.int(b/3)] = 0
-    maze[:, np.int(2*b/3)] = 1
-    maze[0:np.int(a/3), np.int(2*b/3)] = 0
-    maze[np.int(a/5), :] = 1
+    # maze = np.zeros((a, b))
+    # maze[:, np.int(b/3)] = 1
+    # maze[0:np.int(a/8), np.int(b/3)] = 0
+    # maze[np.int(2*b/3), :] = 1
+    # maze[0:np.int(a/3), np.int(2*b/3)] = 0
+    # maze[np.int(a/5), :] = 1
     # maze[np.int(a/5), np.int(3*b/4):b] = 0
     # maze[np.int(3*a/4), :] = 1
     # maze[np.int(3*a/4), 0:np.int(b/4)] = 0
