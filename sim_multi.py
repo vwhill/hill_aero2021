@@ -36,28 +36,26 @@ mapsize = 10000
 [mesh, xm, ym] = astar.meshgen(a, b, mapsize)
 
 start = np.array([[0, 0],
-                  [10, 0], 
-                  [20, 0],
-                  [30, 0],
-                  [40, 0],
+                  # [10, 0], 
+                  # [20, 0],
+                   [30, 0],
+                  # [40, 0],
                   [50, 0]])
 
-end = np.array([[25, 25],
-                [5, 50],
-                [15, 50],
+end = np.array([[5, 50],
+                # [25, 25],
+                # [15, 50],
                 [25, 50],
-                [35, 50],
+                # [35, 50],
                 [45, 50]])
 
 [maze, cost] = astar.mazegen(a, b)
 
 for hh in range(np.size(start, axis=0)):
-    maze[start[hh, 0]] = 0
-    maze[start[hh, 1]] = 0
+    maze[start[hh, 0], start[hh, 1]] = 0
 
 for ww in range(np.size(end, axis=0)):
-    maze[end[ww, 0]] = 0
-    maze[end[ww, 1]] = 0
+    maze[end[hh, 0], end[hh, 1]] = 0
 
 obs = np.where(maze==1)
 obsx = np.asarray(obs[1])
@@ -84,10 +82,7 @@ for yy in range(np.size(pay, axis=0)):
     scale = scale+1
     
 pa = []
-# pa.append(ps[int(pick[0])])
-# for oo in range(np.size(pick)-1):
-#     pa.append(ps[int(int(np.size(start, axis=0))+pick[oo+1])])
-    
+
 for oo in range(np.size(pick)):
     pa.append(ps[int(pick[oo])])
 
@@ -136,6 +131,7 @@ for pp in range(np.size(pick)):
     dxy[pp][0, 0] = d2d_i[pp]
 
 #%% Simulate LQR
+
 x = []
 xdes = []
 xs = []
