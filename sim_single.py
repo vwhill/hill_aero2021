@@ -49,8 +49,9 @@ ya_i = ya
 
 end = np.array([[25, 25]])
 
-[maze, cost, obs] = astar.mazegen(a, b)
+[maze, cost] = astar.mazegen(a, b)
 
+obs = np.where(maze==1)
 obsx = np.asarray(obs[1])
 obsy = np.asarray(obs[0])
 

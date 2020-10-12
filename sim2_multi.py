@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Created on Fri Oct  2 10:39:20 2020
 
@@ -15,8 +16,8 @@ import matplotlib.pyplot as plt
 #%% Build dynamic model
 
 dt = 0.01
-mod = 100
-maxtime = 10000
+mod = 1
+maxtime = 5000
 maxiter = np.int(maxtime/dt)
 t = np.linspace(0, maxtime, maxiter)
 
@@ -37,7 +38,7 @@ mapsize = 10000
 
 start = np.array([[0, 0],
                    # [10, 0], 
-                   # [20, 0],
+                    [20, 0],
                     # [30, 0],
                    # [40, 0],
                   [50, 0]])
@@ -45,7 +46,7 @@ start = np.array([[0, 0],
 end = np.array([[5, 50],
                 # [25, 25],
                 # [15, 50],
-                # [25, 50],
+                [25, 50],
                 # [35, 50],
                 [45, 50]])
 
@@ -135,24 +136,32 @@ for pp in range(np.size(pick)):
 x = []
 xdes = []
 xs = []
-leng = []
+leng = np.zeros((np.size(pick), 1))
 d2d = np.zeros((np.size(pick), 1))
 Hdes = np.zeros((np.size(pick), 1))
+u = 10.0
+done = 0
 
-for aa in range(np.size(pick)):
-    targ = targlist[aa]
+for bb in range(np.size(pick)):
     x.append(np.zeros([statedim, 1]))
-    x[aa][0] = 3.0
-    x[aa][4] = np.deg2rad(Hdes_i[aa])
-    v = x[aa][0, 0]
-    psi = x[aa][4, 0]
-    u = 10.0
     xdes.append(np.zeros([statedim, 1]))
-    xdes[aa][4, 0] = Hdes_i[aa]
     xs.append(np.zeros((statedim, maxiter)))
-    xs[aa][:, 0] = np.ndarray.flatten(x[aa])
-    
-    for ii in range(maxiter):
+    x[bb][0] = 3.0
+    x[bb][4] = np.deg2rad(Hdes_i[bb])
+    v = x[bb][0, 0]
+    psi = x[bb][4, 0]
+    xdes[bb][4, 0] = Hdes_i[bb]
+    xs[bb][:, 0] = np.ndarray.flatten(x[bb])
+
+for ii in range(maxiter):
+    if done == np.size(pick):
+        break
+    for aa in range(np.size(pick)):
+        targ = targlist[aa]
+        if wpt[aa] == np.size(targ, axis=0):
+            continue
+        v = x[aa][0, 0]
+        psi = x[aa][4, 0]
         if ii % mod == 0:
             [d2d[aa], Hdes[aa]] = guide.guidance(xa[aa], ya[aa], xt[aa], yt[aa])
             dxy[aa][0, ii] = d2d[aa]
@@ -168,7 +177,8 @@ for aa in range(np.size(pick)):
                 wpt[aa] = wpt[aa]+1
                 if wpt[aa] == np.size(targ, axis=0):
                     np.disp('Im Finished!')
-                    leng.append(ii)
+                    done = done+1
+                    leng[aa] = ii
                     break
                 else:
                     xt[aa] = targ[int(wpt[aa]), 0]
@@ -187,7 +197,7 @@ for aa in range(np.size(pick)):
 #%% Plots
 
 for gg in range(np.size(pick)):
-    plt.plot(xy[gg][0, :leng[gg]], xy[gg][1, :leng[gg]], label='Aircraft path', linewidth=3)
+    plt.plot(xy[gg][0, :int(leng[gg])], xy[gg][1, :int(leng[gg])], label='Aircraft path', linewidth=3)
     plt.scatter(targlist[gg][:, 0], targlist[gg][:, 1], s=5, label='Waypoints', color='magenta')
     plt.plot(xm[start[gg, 1]], ym[start[gg, 0]], 'ro')
     plt.plot(xm[end[gg, 1]], ym[end[gg, 0]], 'rx')
