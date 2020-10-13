@@ -202,7 +202,7 @@ def mazegen(a, b):
     maze = np.random.random((a, b)) # generate random maze
     for ii in range(0, np.size(maze, axis=0)):
         for jj in range(0, np.size(maze, axis=1)):
-            if maze[ii][jj] < 0.15:
+            if maze[ii][jj] < 0.20:
                 maze[ii][jj] = 1
             else:
                 maze[ii][jj] = 0

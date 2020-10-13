@@ -38,7 +38,7 @@ class LateralFixedWing:
                            [ 0.,      0.]])  # psi
 
         self.C = np.eye(self.statedim)
-        self.D = np.eye(self.statedim, self.indim)
+        self.D = np.zeros((self.statedim, self.indim))
         [self.F, self.G] = discretize(dt, self.A, self.B, self.C, self.D)
 
 class LQI:
